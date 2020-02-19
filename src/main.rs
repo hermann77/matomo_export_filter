@@ -23,35 +23,27 @@ fn main() {
         .help("url of the export"))
     .get_matches();
 
-    let url = matches.value_of("url").unwrap();
+    let url = matches.value_of("url").unwrap_or("URL is not set");
     println!("input URL: {}", url);
 
 
-//  read_ids();
-  read_json(url);
+
+  let lines = read_ids();
+  for (index, line) in lines.into_iter().enumerate() {
+      let line = line.unwrap();
+      print!("Fid={}", line);
+  }
+//  read_json(url);
 }
 
 
-fn read_ids() {
-    let filename = "resources/DIE-DOK_IDs_alle.txt";
+fn read_ids() -> std::vec::Vec<std::result::Result<std::string::String, std::io::Error>> {
+    let filename = "resources/dok_ids.txt";
     // Open the file in read-only mode (ignoring errors).
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
-
     let lines: Vec<_> = reader.lines().collect();
-    let line_number = lines.len();
-
-    // Read the file line by line using the lines() iterator from std::io::BufRead.
-    for (index, line) in lines.into_iter().enumerate() {
-        let line = line.unwrap(); // Ignore errors.
-        // Show the line and its number.
-        print!("Fid={}", line);
-        
-        if index + 1 < line_number {
-            print!("|");
-        }   
-    }
-    println!("");
+    return lines;
 }
 
 
