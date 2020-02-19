@@ -27,13 +27,15 @@ fn main() {
     println!("input URL: {}", url);
 
 
-
-  let lines = read_ids();
-  for (index, line) in lines.into_iter().enumerate() {
+/*
+  let ids = read_ids();
+  for (index, id) in ids.into_iter().enumerate() {
       let line = line.unwrap();
-      print!("Fid={}", line);
+      print!("FId={}", line);
   }
-//  read_json(url);
+*/
+
+  read_json(url);
 }
 
 
@@ -42,8 +44,8 @@ fn read_ids() -> std::vec::Vec<std::result::Result<std::string::String, std::io:
     // Open the file in read-only mode (ignoring errors).
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
-    let lines: Vec<_> = reader.lines().collect();
-    return lines;
+    let ids: Vec<_> = reader.lines().collect();
+    return ids;
 }
 
 
@@ -82,9 +84,15 @@ fn read_json(url : &str) {
         println!("Label: {}", label);
 
         if label == "literatur" { // parse only in DOMAIN/literatur/*
-            let subtable = &json[i]["subtable"];
-            let subtable_size = subtable.as_array().unwrap().len();
+            let subtable_array = &json[i]["subtable"];
+            let subtable_size = subtable_array.as_array().unwrap().len();
             println!("subtable size: {}", subtable_size); 
+
+            for j in 0..subtable_size {
+                let subtable_label = &subtable_array[j]["label"];
+                println!("subtable label: {}", subtable_label);
+            }
+
             break;
         }
     }
