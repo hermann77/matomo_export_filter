@@ -21,9 +21,22 @@ fn main() {
         .long("url")
         .takes_value(true)
         .help("url of the export"))
+    .arg(Arg::with_name("dir1")
+        .short("d1")
+        .long("dir1")
+        .takes_value(true)
+        .help("Directory name in www.DOMAIN/<DIR>"))
+    .arg(Arg::with_name("filter")
+        .short("f")
+        .long("filter")
+        .takes_value(true)
+        .help("Filter string in DIR2 www.DOMAIN/<DIR>/<DIR2>.  E.g. in 'www.example.com/user/my_user_profile' and 'www.example.com/user/my' you can filter on 'profile' to get first one."))
     .get_matches();
 
     let url = matches.value_of("url").unwrap_or("URL is not set");
+    let dir1 = matches.value_of("dir1").unwrap_or("dir1 is not set");
+    let filter = matches.value_of("filter").unwrap_or("filter is not set");
+
     println!("input URL: {}", url);
 
 
@@ -35,7 +48,7 @@ fn main() {
   }
 */
 
-  read_json(url);
+  read_json(url, dir1, filter);
 }
 
 /**
@@ -57,7 +70,7 @@ fn read_ids() -> std::vec::Vec<std::result::Result<std::string::String, std::io:
 * https://docs.rs/curl/0.5.0/curl/
 * https://hermanradtke.com/2015/09/21/get-data-from-a-url-rust.html
 */
-fn read_json(url : &str) {
+fn read_json(url : &str, dir1 : &str, filter : &str) {
 
     let resp = http::handle()
         .get(url)
@@ -87,10 +100,10 @@ fn read_json(url : &str) {
         println!("Label: {}", label);
 
        // if label == "literatur" { // parse only in DOMAIN/literatur/*
-        if label == "bookmark" { // parse only in DOMAIN/bookmark/*
+        if label == dir1 { // parse only in DOMAIN/bookmark/* (if dir1 = 'bookmark')
 
             let bookmarks_nb_hits = &json[i]["nb_hits"];
-            println!("Hits in bookmarks: {}", bookmarks_nb_hits); 
+            println!("Hits in {}: {}", dir1, bookmarks_nb_hits); 
 
             let subtable_array = &json[i]["subtable"];
             let subtable_size = subtable_array.as_array().unwrap().len();
@@ -100,11 +113,11 @@ fn read_json(url : &str) {
                 let subtable_label = &subtable_array[j]["label"];
                 let subtable_label_string = subtable_label.to_string();
 
-                if subtable_label_string.contains("32290") { // parse only in DOMAIN/bookmark/32290/*
+                if subtable_label_string.contains(filter) { // parse only in DOMAIN/bookmark/32290/ (if e.g. filter = 32290)
                     println!("subtable label: {}", subtable_label);
 
                     let hits = &subtable_array[j]["nb_hits"];
-                    println!("HITS in 32290: {}", hits);
+                    println!("HITS in {}: {}", filter, hits);
 
                     break;
                 }
