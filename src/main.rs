@@ -94,14 +94,15 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
 
     let json_len = json.as_array().unwrap().len();
     println!("JSON len: {}", json_len);
+    println!();
 
     for i in 0..json_len {
         let label = &json[i]["label"];
-        println!();
-        println!("Parsing directory DIR1: DOMAIN/{}", label);
 
         if label == dir1 { // parse only in DOMAIN/<DIR1>/* (set by command line option -d)
 
+            println!("Parsing directory DIR1: DOMAIN/{}", label);
+            
             let bookmarks_nb_hits = &json[i]["nb_hits"];
             println!("Hits in DOMAIN/{}: {}", dir1, bookmarks_nb_hits); 
 
