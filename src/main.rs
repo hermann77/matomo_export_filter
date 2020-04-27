@@ -97,31 +97,39 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
 
     for i in 0..json_len {
         let label = &json[i]["label"];
-        println!("Label: {}", label);
+        println!("DIR1: DOMAIN/{}", label);
 
        // if label == "literatur" { // parse only in DOMAIN/literatur/*
         if label == dir1 { // parse only in DOMAIN/bookmark/* (if dir1 = 'bookmark')
 
             let bookmarks_nb_hits = &json[i]["nb_hits"];
-            println!("Hits in {}: {}", dir1, bookmarks_nb_hits); 
+            println!("Hits in DOMAIN/{}: {}", dir1, bookmarks_nb_hits); 
 
             let subtable_array = &json[i]["subtable"];
             let subtable_size = subtable_array.as_array().unwrap().len();
-            println!("subtable size: {}", subtable_size); 
+            println!("Amount of sites (subtable size): {}", subtable_size); 
+
+            let mut hits_sum: i32 = 0;
 
             for j in 0..subtable_size {
                 let subtable_label = &subtable_array[j]["label"];
                 let subtable_label_string = subtable_label.to_string();
 
+                let subtable_url = &subtable_array[j]["url"];
+                println!("URL: {}", subtable_url);
+
                 if subtable_label_string.contains(filter) { // parse only in DOMAIN/bookmark/32290/ (if e.g. filter = 32290)
-                    println!("subtable label: {}", subtable_label);
+                    println!("Script found: {} filtered by {}", subtable_label, filter);
 
-                    let hits = &subtable_array[j]["nb_hits"];
-                    println!("HITS in {}: {}", filter, hits);
-
-                    break;
+                    let hits_string = &subtable_array[j]["nb_hits"].to_string();
+                    let hits_integer = hits_string.parse::<i32>().unwrap();
+                    println!("HITS: {}", hits_integer);
+                    hits_sum = hits_sum + hits_integer;
+                //    break; // don't break because we want to calculate hits sum for all the found (by filtering) scripts
                 }
             }
+
+            println!("Sum of HITS: {}", hits_sum);
 
             break; // use break because we're finished (reached "/bookmarks")
         }
