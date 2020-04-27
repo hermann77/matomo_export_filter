@@ -99,8 +99,7 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
         let label = &json[i]["label"];
         println!("DIR1: DOMAIN/{}", label);
 
-       // if label == "literatur" { // parse only in DOMAIN/literatur/*
-        if label == dir1 { // parse only in DOMAIN/bookmark/* (if dir1 = 'bookmark')
+        if label == dir1 { // parse only in DOMAIN/<DIR1>/* (set by command line option -d)
 
             let bookmarks_nb_hits = &json[i]["nb_hits"];
             println!("Hits in DOMAIN/{}: {}", dir1, bookmarks_nb_hits); 
