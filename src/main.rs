@@ -115,10 +115,11 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
                 let subtable_label = &subtable_array[j]["label"];
                 let subtable_label_string = subtable_label.to_string();
 
-                let subtable_url = &subtable_array[j]["url"];
-                println!("URL: {}", subtable_url);
-
                 if subtable_label_string.contains(filter) { // parse only in DOMAIN/bookmark/32290/ (if e.g. filter = 32290)
+                    
+                    let subtable_url = &subtable_array[j]["url"];
+                    println!("URL: {}", subtable_url);    
+                    
                     println!("Script found: {} filtered by {}", subtable_label, filter);
 
                     let hits_string = &subtable_array[j]["nb_hits"].to_string();
