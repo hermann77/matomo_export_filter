@@ -108,6 +108,40 @@ fn read_json(url: &str, dir1: &str, filter: &str) {
 
 
 /**
+ *  If Matomo export includes entire statistics (all the subdirectories/subtables): 
+ *  for DOMAIN/<DIR1>/.., DOMAIN/<DIR2>/.., DOMAIN/<DIRn>/.. etc.
+ *  so we have to parse all the subdirs to find the wanted dubtable
+ */
+fn prase_in_one_subtable(json: Value, filter: &str) {
+    let json_len = json.as_array().unwrap().len();
+    println!("Number of matched sites (JSON len): {}", json_len);
+    println!();
+
+    let mut hits_sum: i32 = 0;
+
+    for i in 0..json_len {
+        let label = &json[i]["label"];
+        let label_string = &label.to_string();
+
+        if label_string.contains(filter) {
+
+            println!("Statistic for URL:{}", label);
+
+            let nb_hits = &json[i]["nb_hits"];
+            println!("Hits: {}", nb_hits);
+    
+            let hits_string = &nb_hits.to_string();
+            let hits_integer = hits_string.parse::<i32>().unwrap();
+           
+            hits_sum = hits_sum + hits_integer;
+        }
+
+        println!("Sum of HITS: {}", hits_sum);
+    }
+}
+
+
+/**
  *  If matomo export includes only statistics for only one subdir/subtable (Matomo API 'idSubtable')
  *    e.g. only for DOMAIN/<DIR1>/
  *    and additionally used a prefilter (Matomo API 'filter_pattern'):
@@ -170,35 +204,3 @@ fn parse_in_all_subtables(json: Value, dir1: &str, filter: &str) {
 }
 
 
-/**
- *  If Matomo export includes entire statistics (all the subdirectories/subtables): 
- *  for DOMAIN/<DIR1>/.., DOMAIN/<DIR2>/.., DOMAIN/<DIRn>/.. etc.
- *  so we have to parse all the subdirs to find the wanted dubtable
- */
-fn prase_in_one_subtable(json: Value, filter: &str) {
-    let json_len = json.as_array().unwrap().len();
-    println!("Number of matched sites (JSON len): {}", json_len);
-    println!();
-
-    let mut hits_sum: i32 = 0;
-
-    for i in 0..json_len {
-        let label = &json[i]["label"];
-        let label_string = &label.to_string();
-
-        if label_string.contains(filter) {
-
-            println!("Statistic for URL:{}", label);
-
-            let nb_hits = &json[i]["nb_hits"];
-            println!("Hits: {}", nb_hits);
-    
-            let hits_string = &nb_hits.to_string();
-            let hits_integer = hits_string.parse::<i32>().unwrap();
-           
-            hits_sum = hits_sum + hits_integer;
-        }
-
-        println!("Sum of HITS: {}", hits_sum);
-    }
-}
