@@ -25,6 +25,7 @@ fn main() {
         .short("d1")
         .long("dir1")
         .takes_value(true)
+        .required(false)
         .help("Directory name in www.DOMAIN/<DIR>"))
     .arg(Arg::with_name("filter")
         .short("f")
@@ -96,13 +97,16 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
     println!("JSON len: {}", json_len);
     println!();
 
+
+
+
     for i in 0..json_len {
         let label = &json[i]["label"];
 
         if label == dir1 { // parse only in DOMAIN/<DIR1>/* (set by command line option -d)
 
             println!("Parsing directory DIR1: DOMAIN/{}", label);
-            
+
             let bookmarks_nb_hits = &json[i]["nb_hits"];
             println!("Hits in DOMAIN/{}: {}", dir1, bookmarks_nb_hits); 
 
@@ -121,7 +125,8 @@ fn read_json(url : &str, dir1 : &str, filter : &str) {
                     let subtable_url = &subtable_array[j]["url"];
                     println!("URL: {}", subtable_url);    
                     
-                    println!("Script found: {} filtered by {}", subtable_label, filter);
+                    println!("Script found: {}", subtable_label);
+                    println!("Filtered by {}", filter);
 
                     let hits_string = &subtable_array[j]["nb_hits"].to_string();
                     let hits_integer = hits_string.parse::<i32>().unwrap();
