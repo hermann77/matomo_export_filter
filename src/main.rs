@@ -18,6 +18,7 @@ fn main() {
         .short("u")
         .long("url")
         .takes_value(true)
+        .required(true)
         .help("url of the export"))
     .arg(Arg::with_name("dir1")
         .short("d1")
@@ -29,6 +30,7 @@ fn main() {
         .short("f")
         .long("filter")
         .takes_value(true)
+        .required(false)
         .help("Filter string in DIR2 www.DOMAIN/<DIR>/<DIR2>.  E.g. in 'www.example.com/user/my_user_profile' and 'www.example.com/user/my' you can filter on 'profile' to get first one."))
     .get_matches();
 
@@ -87,7 +89,7 @@ fn read_json(url: &str, dir1: &str, filter: &str) {
     });
 
     // @TODO: check also id right Matomo API used (&filter_pattern AND &idSubtable MUST be SET)
-    if dir1.is_empty() {
+    if dir1 == "dir1 is not set" {
         // if matomo export includes only statistics for only one subdir/subtable (Matomo API 'idSubtable') e.g. DOMAIN/<DIR1>/*
         // and additionally used a prefilter (Matomo API 'filter_pattern'):
         // e.g. www.MATOMO.com/index.php?date=2017-04-07
@@ -136,8 +138,9 @@ fn prase_in_one_subtable(json: Value, filter: &str) {
             hits_sum = hits_sum + hits_integer;
         }
 
-        println!("Sum of HITS: {}", hits_sum);
     }
+
+    println!("Sum of HITS: {}", hits_sum);
 }
 
 
